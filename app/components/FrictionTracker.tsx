@@ -25,30 +25,40 @@ export default function FrictionTracker({ logs, onAddLog, getIntensityLabel }: F
         <p className="text-stone-500 text-xs mb-4">Log instances to update contextual data loops.</p>
         
         <form onSubmit={handleSubmit} className="space-y-4 mb-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1.5">What triggered the urge just now?</label>
-            <input
-              type="text"
-              value={trigger}
-              onChange={(e) => setTrigger(e.target.value)}
-              placeholder="e.g., Sitting down after dinner, notification ping..."
-              className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm text-stone-900 focus:outline-none focus:border-emerald-500 placeholder-stone-400"
-              required
-            />
-          </div>
-          <div>
-            <div className="flex justify-between text-xs font-semibold uppercase tracking-wider mb-2">
-              <span className="text-stone-500">Impulse Strength:</span>
-              <span className="text-emerald-700 font-bold">{getIntensityLabel(intensity)}</span>
+          <div className="space-y-4 mb-4">
+            <div>
+              <label htmlFor="trigger-input" className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+                What triggered the urge just now?
+              </label>
+              <input
+                id="trigger-input"
+                type="text"
+                value={trigger}
+                onChange={(e) => setTrigger(e.target.value)}
+                placeholder="e.g., Sitting down after dinner, notification ping..."
+                className="w-full bg-stone-50 border border-stone-300 rounded-xl p-3 text-sm text-stone-900 focus:outline-none focus:border-emerald-600 placeholder-stone-500 font-medium"
+                required
+                aria-required="true"
+              />
             </div>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              value={intensity}
-              onChange={(e) => setIntensity(e.target.value)}
-              className="w-full accent-emerald-700 bg-stone-200 h-2 rounded-lg cursor-pointer"
-            />
+            <div>
+              <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+                <label htmlFor="intensity-slider">Impulse Strength:</label>
+                <span className="text-emerald-800 font-extrabold">{getIntensityLabel(intensity)}</span>
+              </div>
+              <input
+                id="intensity-slider"
+                type="range"
+                min="1"
+                max="10"
+                value={intensity}
+                onChange={(e) => setIntensity(e.target.value)}
+                className="w-full accent-emerald-700 bg-stone-200 h-2 rounded-lg cursor-pointer"
+                aria-valuemin={1}
+                aria-valuemax={10}
+                aria-valuenow={parseInt(intensity)}
+              />
+            </div>
           </div>
           <button type="submit" className="w-full bg-stone-900 hover:bg-stone-800 text-white transition-colors py-2.5 rounded-xl text-xs font-medium shadow-sm">
             Log Routine Event

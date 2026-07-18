@@ -60,14 +60,18 @@ export default function ActionPlanner({ tasks, onAddTask, onToggleTask }: Action
             {tasks.map((task) => (
               <div 
                 key={task.id} 
+                role="button"
+                aria-label={`Mark task "${task.text}" as ${task.completed ? 'incomplete' : 'complete'}`}
+                tabIndex={0}
                 onClick={() => onToggleTask(task.id)}
-                className={`p-3 rounded-xl text-xs border cursor-pointer transition-all flex items-center justify-between ${task.completed ? 'bg-stone-50 border-stone-200/60 opacity-60 line-through text-stone-400' : 'bg-white border-stone-200 hover:border-emerald-300'}`}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onToggleTask(task.id); }}
+                className={`p-3 rounded-xl text-xs border cursor-pointer transition-all flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-emerald-500 ${task.completed ? 'bg-stone-100 border-stone-300 opacity-60 line-through text-stone-500' : 'bg-white border-stone-300 hover:border-emerald-400 text-stone-900'}`}
               >
                 <div className="pr-2">
-                  <p className="font-medium text-stone-800">{task.text}</p>
-                  <span className="text-[10px] text-stone-400 font-medium">{task.timeSlot}</span>
+                  <p className="font-semibold">{task.text}</p>
+                  <span className="text-[10px] text-stone-500 font-bold uppercase tracking-tight">{task.timeSlot}</span>
                 </div>
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${task.completed ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-stone-300'}`}>
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 font-bold ${task.completed ? 'bg-emerald-700 border-emerald-700 text-white' : 'border-stone-400'}`}>
                   {task.completed && '✓'}
                 </div>
               </div>

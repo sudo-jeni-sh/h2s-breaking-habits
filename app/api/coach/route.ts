@@ -44,9 +44,22 @@ import { Mistral } from '@mistralai/mistralai';
 const apiKey = process.env.MISTRAL_API_KEY || '';
 const client = new Mistral({ apiKey });
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { habit, logs, message, chatHistory } = await req.json();
+    const payload = await request.json();
+    const { habit, message, logs, chatHistory } = payload;
+
+    // Strict Security Input Type Validation Guardrail Check
+    if (
+      !habit || typeof habit !== 'string' || 
+      !message || typeof message !== 'string' ||
+      !Array.isArray(logs) || !Array.isArray(chatHistory)
+    ) {
+      return new Response(JSON.stringify({ error: 'Insecure or malformed payload layout signature rejected.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     // Context-aware dynamic framing based on user tracking state
     // const systemPrompt = `
