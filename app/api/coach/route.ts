@@ -1,46 +1,6 @@
-// import { NextResponse } from 'next/server';
-// import { GoogleGenAI } from '@google/genai';
-
-// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-
-// export async function POST(req: Request) {
-//   try {
-//     const { habit, logs, message, chatHistory } = await req.json();
-
-//     const systemPrompt = `
-//       You are an expert behavior change coach specializing in Cognitive Behavioral Therapy (CBT).
-//       The user is working dynamically to overcome the following habit/addiction: "${habit}".
-//       Here is their recent live friction tracking history for this habit: ${JSON.stringify(logs)}
-//       Provide an empathetic, personalized, and context-aware coaching response.
-//       Keep it actionable and restricted to under 3 sentences max.
-//     `;
-
-//     const contents = [
-//       { role: 'user', parts: [{ text: systemPrompt }] },
-//       ...chatHistory.map((ch: any) => ({
-//         role: ch.sender === 'user' ? 'user' : 'model',
-//         parts: [{ text: ch.text }]
-//       })),
-//       { role: 'user', parts: [{ text: message }] }
-//     ];
-
-//     // UPDATED ACTIVE PRODUCTION STRING
-//     const response = await ai.models.generateContent({
-//       model: 'gemini-2.0-flash', // Ensure this string matches the latest flash iteration or 'gemini-2.5-pro'
-//       contents: contents,
-//     });
-
-//     return NextResponse.json({ reply: response.text });
-//   } catch (error) {
-//     console.error('API Invocation Error:', error);
-//     return NextResponse.json({ error: 'Gemini invocation failed' }, { status: 500 });
-//   }
-// }
-
 import { NextResponse } from 'next/server';
 import { Mistral } from '@mistralai/mistralai';
 
-// Initialize the Mistral client with your server-protected API token
 const apiKey = process.env.MISTRAL_API_KEY || '';
 const client = new Mistral({ apiKey });
 
@@ -49,9 +9,8 @@ export async function POST(request: Request) {
     const payload = await request.json();
     const { habit, message, logs, chatHistory } = payload;
 
-    // Strict Security Input Type Validation Guardrail Check
     if (
-      !habit || typeof habit !== 'string' || 
+      !habit || typeof habit !== 'string' ||
       !message || typeof message !== 'string' ||
       !Array.isArray(logs) || !Array.isArray(chatHistory)
     ) {
@@ -61,17 +20,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // Context-aware dynamic framing based on user tracking state
-    // const systemPrompt = `
-    //   You are an expert behavior change coach specializing in Cognitive Behavioral Therapy (CBT).
-    //   The user is working dynamically to overcome the following habit/addiction: "${habit}".
-      
-    //   Here is their recent live friction tracking history for this habit:
-    //   ${JSON.stringify(logs)}
-
-    //   Provide an empathetic, personalized, and context-aware coaching response to their message. 
-    //   Never give canned, static, or generic answers. Keep your response completely actionable and restricted to under 3 sentences max.
-    // `;
     const systemPrompt = `
   You are an elite behavioral change consultant and clinical coach specializing in Cognitive Behavioral Therapy (CBT).
   The user is consulting you to structurally address and balance the following lifestyle area: "${habit}".
@@ -92,7 +40,6 @@ For Time Slot, choose exactly one of these: Morning Focus, Midday Routine, Eveni
 Example: "I recommend stepping away from screens. [Action: Leave phone in the hallway | Night Vulnerability Window]"
 `;
 
-    // Map your custom state elements cleanly into Mistral's required array format
     const formattedMessages = [
       { role: 'system' as const, content: systemPrompt },
       ...chatHistory.map((ch: any) => ({
@@ -102,7 +49,6 @@ Example: "I recommend stepping away from screens. [Action: Leave phone in the ha
       { role: 'user' as const, content: message },
     ];
 
-    // Invoke Mistral's ultra-fast flash model to preserve quick response times
     const response = await client.chat.complete({
       model: 'mistral-large-latest', 
       messages: formattedMessages,

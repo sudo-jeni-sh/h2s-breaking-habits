@@ -25,25 +25,37 @@ export default function ActionPlanner({ tasks, onAddTask, onToggleTask }: Action
         <p className="text-stone-500 text-xs mb-4">Commit targeted micro-actions to your daily time breakdown.</p>
         
         <form onSubmit={handleSubmit} className="space-y-3 mb-4">
-          <input
-            type="text"
-            value={newTaskText}
-            onChange={(e) => setNewTaskText(e.target.value)}
-            placeholder="e.g., Leave phone in hallway, Drink glass of water..."
-            className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs text-stone-900 focus:outline-none focus:border-emerald-500 placeholder-stone-400"
-            required
-          />
+          <div>
+            <label htmlFor="task-input" className="block text-[10px] font-bold uppercase tracking-wider text-stone-600 mb-1.5">
+              New action
+            </label>
+            <input
+              id="task-input"
+              type="text"
+              value={newTaskText}
+              onChange={(e) => setNewTaskText(e.target.value)}
+              placeholder="e.g., Leave phone in hallway, Drink glass of water..."
+              className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs text-stone-900 focus:outline-none focus:border-emerald-500 placeholder-stone-400"
+              required
+            />
+          </div>
           <div className="flex gap-2 items-center">
-            <select
-              value={newTaskTime}
-              onChange={(e) => setNewTaskTime(e.target.value)}
-              className="flex-grow bg-stone-50 border border-stone-200 rounded-xl p-2 text-xs text-stone-700 focus:outline-none"
-            >
-              <option value="Morning Focus">Morning Interval</option>
-              <option value="Midday Routine">Midday Interval</option>
-              <option value="Evening Transition">Evening Interval</option>
-              <option value="Night Vulnerability Window">Night Interval</option>
-            </select>
+            <div className="flex-grow">
+              <label htmlFor="task-time" className="block text-[10px] font-bold uppercase tracking-wider text-stone-600 mb-1.5">
+                Time slot
+              </label>
+              <select
+                id="task-time"
+                value={newTaskTime}
+                onChange={(e) => setNewTaskTime(e.target.value)}
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-xs text-stone-700 focus:outline-none"
+              >
+                <option value="Morning Focus">Morning Interval</option>
+                <option value="Midday Routine">Midday Interval</option>
+                <option value="Evening Transition">Evening Interval</option>
+                <option value="Night Vulnerability Window">Night Interval</option>
+              </select>
+            </div>
             <button type="submit" className="bg-stone-900 hover:bg-stone-800 text-white text-xs px-3 py-2 rounded-xl font-medium transition-colors whitespace-nowrap">
               Add Action
             </button>
@@ -62,9 +74,15 @@ export default function ActionPlanner({ tasks, onAddTask, onToggleTask }: Action
                 key={task.id} 
                 role="button"
                 aria-label={`Mark task "${task.text}" as ${task.completed ? 'incomplete' : 'complete'}`}
+                aria-pressed={task.completed}
                 tabIndex={0}
                 onClick={() => onToggleTask(task.id)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onToggleTask(task.id); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onToggleTask(task.id);
+                  }
+                }}
                 className={`p-3 rounded-xl text-xs border cursor-pointer transition-all flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-emerald-500 ${task.completed ? 'bg-stone-100 border-stone-300 opacity-60 line-through text-stone-500' : 'bg-white border-stone-300 hover:border-emerald-400 text-stone-900'}`}
               >
                 <div className="pr-2">
