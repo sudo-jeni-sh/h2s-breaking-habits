@@ -9,18 +9,22 @@ jest.mock('@mistralai/mistralai', () => ({
 import { POST } from '../app/api/coach/route';
 import { NextRequest } from 'next/server';
 
-describe('Mindful Space Framework - AI Route Integrity', () => {
-  it('should compile handler definitions safely without execution crashes', () => {
+describe('Mindful Space Framework - Advanced Cloud Route Integrity', () => {
+  it('should cleanly expose production endpoints', () => {
     expect(POST).toBeDefined();
+    expect(typeof POST).toBe('function');
   });
 
-  it('should successfully enforce payload security layout boundaries', async () => {
-    const mockRequest = new NextRequest('http://localhost:3000/api/coach', {
+  it('should strictly reject malformed incoming browser payloads', async () => {
+    const brokenPayload = new NextRequest('http://localhost:3000/api/coach', {
       method: 'POST',
-      body: JSON.stringify({ invalidPayload: true })
+      body: JSON.stringify({ message: 12345 })
     });
-    
-    const response = await POST(mockRequest);
-    expect(response.status).toBe(400);
+
+    const res = await POST(brokenPayload);
+    expect(res.status).toBe(400);
+
+    const data = await res.json();
+    expect(data).toHaveProperty('error');
   });
 });
